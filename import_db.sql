@@ -1,3 +1,8 @@
+DROP TABLE if EXISTS users;
+DROP TABLE if EXISTS question_follows;
+DROP TABLE if EXISTS replies;
+DROP TABLE if EXISTS questions;
+DROP TABLE if EXISTS question_likes;
 
 CREATE TABLE users(
   id INTEGER PRIMARY KEY,
@@ -8,7 +13,9 @@ CREATE TABLE users(
 CREATE TABLE questions(
   id INTEGER PRIMARY KEY,
   title TEXT NOT NULL,
-  body TEXT NOT NULL
+  body TEXT NOT NULL,
+  author_id INTEGER NOT NULL,
+  FOREIGN KEY (author_id) REFERENCES users (id);
 );
 
 CREATE TABLE question_follows(
@@ -47,12 +54,12 @@ VALUES
   ('Mickey', 'Mouse');
 
 INSERT INTO
-  questions(title, body)
+  questions(title, body, author_id)
 VALUES
-  ('Best Fountain Pen', 'What is the best fountain pen?'),
-  ('Best coding language', 'In your opinion, what''s the best language to learn?'),
-  ('Best food', 'If you could only eat only one type of food for the rest of your life, what would you eat?'),
-  ('how to code', 'How do I go about learning how to code?');
+  ('Best Fountain Pen', 'What is the best fountain pen?', 1),
+  ('Best coding language', 'In your opinion, what''s the best language to learn?', 2),
+  ('Best food', 'If you could only eat only one type of food for the rest of your life, what would you eat?', 1),
+  ('how to code', 'How do I go about learning how to code?', 2);
 
 INSERT INTO
   question_follows(user_id, question_id)
