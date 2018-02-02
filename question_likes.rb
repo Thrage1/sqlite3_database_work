@@ -44,4 +44,39 @@ class QuestionLike
     users.map { |user| User.new(user) }
   end
 
+  # The reason for this query instead of just using
+  # QuestionLike#likers_for_question_id is because
+  # that would query for more data = slower
+
+  def self.num_likes_for_question_id(question_id)
+    num = QuestionsDatabase.instance.execute(<<-SQL, question_id: question_id)
+      SELECT
+        COUNT(*) as count
+      FROM
+        questions
+      JOIN
+        question_likes
+      ON
+        question_likes.question_id = questions.id
+      WHERE
+        question_id = :question_id
+    SQL
+    num.first['count']
+  end
+
+  def self.liked_questions_for_user_id(user_id)
+    questions = QuestionsDatabase.instance.execute(<<-SQL, user_id: user_id)
+      SELECT
+        *
+      FROM
+        questions
+      JOIN
+        question_likes
+      ON
+        questions.id = question_likes.question_id
+      WHERE
+        question_likes.user_id = :user_id
+    SQL
+      questions.map { |question| Question.new(question) }
+  end
 end
