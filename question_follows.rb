@@ -2,6 +2,7 @@
 require 'SQLite3'
 require_relative 'questions_database'
 require_relative 'users'
+require_relative 'questions'
 
 class QuestionFollow
   attr_accessor :user_id, :question_id
@@ -49,4 +50,19 @@ class QuestionFollow
     users.map { |user| User.new(user)  }
   end
 
+  def self.followed_questions_for_user_id(user_id)
+    questions = QuestionsDatabase.instance.execute(<<-SQL, user_id: user_id)
+      SELECT
+        *
+      FROM
+        questions
+      JOIN
+        question_follows
+      ON
+        question_follows.question_id = questions.id
+      WHERE
+        question_follows.user_id = :user_id
+    SQL
+    questions.map { |question| Question.new(question) }
+  end
 end
