@@ -54,4 +54,36 @@ class User
   def followed_questions
     QuestionFollow.followed_questions_for_user_id(id)
   end
+
+  def liked_questions
+    QuestionLike.liked_questions_for_user_id(id)
+  end
+
+  def num_authored_questions
+    num = QuestionsDatabase.instance.execute(<<-SQL, id: id)
+      select
+        count(*) as count
+      from
+        questions
+      where
+        questions.author_id = :id
+      group by author_id
+    SQL
+    if (num.first)
+      num.first['count']
+    else
+      0
+    end
+  end
+
+  def average_karma
+    num_questions_asked = self.num_authored_questions
+    if num_questions_asked == 0
+      0
+    else
+      total_likes = 0
+      self.authored_questions.each { |question| total_likes += question.num_likes }
+      total_likes/num_questions_asked
+    end
+  end
 end
