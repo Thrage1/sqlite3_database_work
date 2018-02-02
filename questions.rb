@@ -35,6 +35,10 @@ class Question
     Question.new(question.first)
   end
 
+  def author
+    User.find_by_id(author_id)
+  end
+
   def initialize(options)
     @id = options['id']
     @title = options['title']
