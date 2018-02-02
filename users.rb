@@ -13,6 +13,27 @@ class User
     @lname = options['lname']
   end
 
+  def save
+    if @id
+      QuestionsDatabase.instance.execute(<<-SQL, fname: fname, lname: lname, id: id)
+        UPDATE
+          users
+        SET
+          fname = :fname, lname = :lname
+        WHERE
+          id = :id
+      SQL
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, fname: fname, lname: lname)
+        INSERT INTO
+          users(fname, lname)
+        VALUES
+          (:fname, :lname)
+      SQL
+      @id = QuestionsDatabase.instance.last_insert_row_id
+    end
+  end
+
   def self.find_by_id(id)
     user = QuestionsDatabase.instance.execute(<<-SQL, id: id)
       SELECT
@@ -83,7 +104,7 @@ class User
     else
       total_likes = 0
       self.authored_questions.each { |question| total_likes += question.num_likes }
-      total_likes/num_questions_asked
+      total_likes.to_f/num_questions_asked.to_f
     end
   end
 end
