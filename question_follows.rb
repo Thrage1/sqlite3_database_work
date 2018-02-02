@@ -85,4 +85,25 @@ class QuestionFollow
     SQL
     followed_questions.map { |question| Question.new(question) }
   end
+
+  def save
+    if @id
+      QuestionsDatabase.instance.execute(<<-SQL, question_id: question_id, user_id: user_id, id: id)
+      UPDATE
+        question_follows
+      SET
+        question_id = :question_id, user_id = :user_id
+      WHERE
+        id = :id
+      SQL
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, question_id: question_id, user_id: user_id)
+      INSERT INTO
+        question_follows(question_id, user_id)
+      VALUES
+        (:question_id, :user_id)
+      SQL
+      @id = QuestionsDatabase.instance.last_insert_row_id
+    end
+  end
 end

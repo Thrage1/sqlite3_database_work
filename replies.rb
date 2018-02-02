@@ -87,4 +87,25 @@ class Reply
     end
   end
 
+  def save
+    if @id
+      QuestionsDatabase.instance.execute(<<-SQL, user_id: user_id, parent_reply_id: parent_reply_id, body: body, id: id, question_id: question_id)
+        UPDATE
+          replies
+        SET
+          user_id = :user_id, body = :body, parent_reply_id = :parent_reply_id, question_id = :question_id
+        WHERE
+          id = :id
+      SQL
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, user_id: user_id, body: body, question_id: question_id, parent_reply_id: parent_reply_id)
+        INSERT INTO
+          replies(user_id, body, question_id, parent_reply_id)
+        VALUES
+          (:user_id, :body, :question_id, :parent_reply_id)
+      SQL
+      @id = QuestionsDatabase.instance.last_insert_row_id
+    end
+  end
+
 end
