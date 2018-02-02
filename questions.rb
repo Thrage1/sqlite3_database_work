@@ -50,5 +50,7 @@ class Question
     @author_id = options['author_id']
   end
 
-
+  def followers
+    QuestionFollow.followers_for_question_id(id)
+  end
 end
