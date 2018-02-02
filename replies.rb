@@ -4,6 +4,7 @@ require_relative 'questions_database'
 
 class Reply
   attr_accessor :user_id, :question_id, :parent_reply_id, :body
+  attr_reader :id
 
   def self.all
     data = QuestionsDatabase.instance.execute("SELECT * FROM replies")
@@ -57,4 +58,33 @@ class Reply
   def author
     User.find_by_id(user_id)
   end
+
+  def question
+    Question.find_by_id(question_id)
+  end
+
+  def parent_reply
+    if parent_reply_id
+      Reply.find_by_id(parent_reply_id)
+    else
+      p 'there is no parent reply'
+    end
+  end
+
+  def child_reply
+    reply = QuestionsDatabase.instance.execute(<<-SQL, id: self.id)
+    SELECT
+    *
+    FROM
+    replies
+    WHERE
+    parent_reply_id = :id
+  SQL
+    if reply.first
+      Reply.new(reply.first)
+    else
+      p 'no parent replies'
+    end
+  end
+
 end
