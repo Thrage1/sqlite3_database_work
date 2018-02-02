@@ -65,4 +65,24 @@ class QuestionFollow
     SQL
     questions.map { |question| Question.new(question) }
   end
+
+  def self.most_followed_questions(n)
+    followed_questions = QuestionsDatabase.instance.execute(<<-SQL, n: n)
+      SELECT
+        *, count(*)
+      FROM
+        questions
+      JOIN
+        question_follows
+      ON
+        questions.id = question_follows.question_id
+      GROUP BY
+        questions.id
+      ORDER BY
+        count(*) DESC
+      LIMIT
+        :n
+    SQL
+    followed_questions.map { |question| Question.new(question) }
+  end
 end
