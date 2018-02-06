@@ -1,8 +1,9 @@
 
 require 'SQLite3'
 require_relative 'questions_database'
+require_relative 'model_base'
 
-class Question
+class Question < ModelBase
   attr_accessor :title, :body
   attr_reader :author_id, :id
 
@@ -23,17 +24,17 @@ class Question
     questions.map { |question| Question.new(question) }
   end
 
-  def self.find_by_id(id)
-    question = QuestionsDatabase.instance.execute(<<-SQL, id: id)
-      SELECT
-        *
-      FROM
-        questions
-      WHERE
-        id = :id
-    SQL
-    Question.new(question.first)
-  end
+  # def self.find_by_id(id)
+  #   question = QuestionsDatabase.instance.execute(<<-SQL, id: id)
+  #     SELECT
+  #       *
+  #     FROM
+  #       questions
+  #     WHERE
+  #       id = :id
+  #   SQL
+  #   Question.new(question.first)
+  # end
 
   def author
     User.find_by_id(author_id)
