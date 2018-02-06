@@ -2,8 +2,10 @@
 require 'SQLite3'
 require_relative 'questions_database'
 require_relative 'questions'
+require_relative 'model_base'
 
-class User
+
+class User < ModelBase
   attr_accessor :fname, :lname
   attr_reader :id
 
@@ -34,17 +36,17 @@ class User
     end
   end
 
-  def self.find_by_id(id)
-    user = QuestionsDatabase.instance.execute(<<-SQL, id: id)
-      SELECT
-        *
-      FROM
-        users
-      WHERE
-        id = :id
-    SQL
-    User.new(user.first)
-  end
+  # def self.find_by_id(id)
+  #   user = QuestionsDatabase.instance.execute(<<-SQL, id: id)
+  #     SELECT
+  #       *
+  #     FROM
+  #       users
+  #     WHERE
+  #       id = :id
+  #   SQL
+  #   User.new(user.first)
+  # end
 
   def self.find_by_name(fname, lname)
     user = QuestionsDatabase.instance.execute(<<-SQL, fname: fname, lname: lname)
