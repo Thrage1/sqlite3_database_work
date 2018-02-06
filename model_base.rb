@@ -20,6 +20,13 @@ class ModelBase
   end
 
   def self.all
+      data = QuestionsDatabase.execute(<<-SQL)
+    SELECT
+      *
+    FROM
+      #{table}
+    SQL
+    data.map { |datum| self.new(datum) }
   end
 
   def save
