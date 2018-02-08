@@ -24,18 +24,6 @@ class Question < ModelBase
     questions.map { |question| Question.new(question) }
   end
 
-  # def self.find_by_id(id)
-  #   question = QuestionsDatabase.instance.execute(<<-SQL, id: id)
-  #     SELECT
-  #       *
-  #     FROM
-  #       questions
-  #     WHERE
-  #       id = :id
-  #   SQL
-  #   Question.new(question.first)
-  # end
-
   def author
     User.find_by_id(author_id)
   end

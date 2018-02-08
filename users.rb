@@ -36,18 +36,6 @@ class User < ModelBase
     end
   end
 
-  # def self.find_by_id(id)
-  #   user = QuestionsDatabase.instance.execute(<<-SQL, id: id)
-  #     SELECT
-  #       *
-  #     FROM
-  #       users
-  #     WHERE
-  #       id = :id
-  #   SQL
-  #   User.new(user.first)
-  # end
-
   def self.find_by_name(fname, lname)
     user = QuestionsDatabase.instance.execute(<<-SQL, fname: fname, lname: lname)
       SELECT
