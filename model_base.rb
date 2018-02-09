@@ -47,6 +47,8 @@ class ModelBase
       WHERE
         #{where}
     SQL
+
+    data.map { |datum| self.new(datum) }
   end
 end
 # you can use Object#instance_variables
