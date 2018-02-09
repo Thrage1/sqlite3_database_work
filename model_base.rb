@@ -20,7 +20,7 @@ class ModelBase
   end
 
   def self.all
-      data = QuestionsDatabase.execute(<<-SQL)
+      data = QuestionsDatabase.instance.execute(<<-SQL)
     SELECT
       *
     FROM
@@ -30,6 +30,23 @@ class ModelBase
   end
 
   def save
+  end
+
+  def self.where(options)
+    if options.is_a?(Hash)
+      vals = options.values
+      where = options.keys.map { |key| "#{key} = ?" }.join(" AND ")
+    else
+      vals = []
+    end
+    data = QuestionsDatabase.instance.execute(<<-SQL, *vals)
+      SELECT
+        *
+      FROM
+        #{self.table}
+      WHERE
+        #{where}
+    SQL
   end
 end
 # you can use Object#instance_variables
